@@ -30,6 +30,13 @@ Authelia SSO/OIDC stack for internal services.
   - `${BASE_STACK_DATA_PATH}/postgresql`
 - Redis is intentionally non-persistent (session loss after Redis/container restart is accepted).
 
+## Container user
+
+- Authelia runs as non-root user via `AUTHELIA_UID`/`AUTHELIA_GID`.
+- Default values in `.env.example`: `2000:2000` (free on your host at creation time).
+- Ensure the Authelia data path ownership matches this user, e.g.:
+  - `chown -R 2000:2000 /opt/docker/authelia/authelia`
+
 ## Integration links
 
 - Reverse proxy: https://github.com/sidey79/caddy-rproxy
