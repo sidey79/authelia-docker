@@ -1,1 +1,70 @@
+name: authelia-docker
 
+services:
+  authelia:
+    image: authelia/authelia:4.39.4
+    container_name: authelia
+    depends_on:
+      postgresql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./config/authelia:/config:ro
+      - ${BASE_STACK_DATA_PATH}/authelia:/var/lib/authelia
+    environment:
+      TZ: ${TZ}
+      AUTHELIA_IDENTITY_VALIDATION__RESET_PASSWORD__JWT_SECRET: ${AUTHELIA_IDENTITY_VALIDATION__RESET_PASSWORD__JWT_SECRET}
+      AUTHELIA_SESSION__SECRET: ${AUTHELIA_SESSION__SECRET}
+      AUTHELIA_STORAGE__ENCRYPTION_KEY: ${AUTHELIA_STORAGE__ENCRYPTION_KEY}
+      AUTHELIA_STORAGE__POSTGRES__PASSWORD: ${AUTHELIA_STORAGE__POSTGRES__PASSWORD}
+      AUTHELIA_NOTIFIER__SMTP__ADDRESS: ${AUTHELIA_NOTIFIER__SMTP__ADDRESS}
+      AUTHELIA_NOTIFIER__SMTP__SENDER: ${AUTHELIA_NOTIFIER__SMTP__SENDER}
+    ports: []
+    networks:
+      - authelia_internal
+      - proxy_net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:9091/api/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  postgresql:
+    image: docker.io/library/postgres:16.13@sha256:78df81b1442dcc764c1104154da7162635e40cfffe67579c42a1c1b96dfc209c
+    volumes:
+      - ${BASE_STACK_DATA_PATH}/postgresql:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports: []
+    networks:
+      - authelia_internal
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  redis:
+    image: docker.io/library/redis:8
+    ports: []
+    networks:
+      - authelia_internal
+    command: ["redis-server", "--save", "", "--appendonly", "no", "--loglevel", "warning"]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+networks:
+  authelia_internal:
+    internal: true
+  proxy_net:
+    external: true
+    name: network_backend_net
