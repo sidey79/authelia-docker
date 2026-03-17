@@ -51,10 +51,10 @@ cp .env.example .env
 # adapt .env and config/authelia/configuration.yml for your domain
 mkdir -p /opt/docker/authelia/authelia /opt/docker/authelia/postgresql
 mkdir -p /opt/docker/authelia/secrets
-openssl rand -hex 32 > /opt/docker/authelia/secrets/reset_password_jwt_secret
-openssl rand -hex 32 > /opt/docker/authelia/secrets/session_secret
-openssl rand -hex 32 > /opt/docker/authelia/secrets/storage_encryption_key
-openssl rand -hex 32 > /opt/docker/authelia/secrets/postgres_password
+openssl rand -hex 32 | tr -d '\n' > /opt/docker/authelia/secrets/reset_password_jwt_secret
+openssl rand -hex 32 | tr -d '\n' > /opt/docker/authelia/secrets/session_secret
+openssl rand -hex 32 | tr -d '\n' > /opt/docker/authelia/secrets/storage_encryption_key
+openssl rand -hex 32 | tr -d '\n' > /opt/docker/authelia/secrets/postgres_password
 chown -R root:1007 /opt/docker/authelia/secrets
 chmod 750 /opt/docker/authelia/secrets
 chmod 640 /opt/docker/authelia/secrets/*

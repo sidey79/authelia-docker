@@ -19,7 +19,7 @@ services:
       AUTHELIA_SESSION_SECRET_FILE: /run/authelia-secrets/session_secret
       AUTHELIA_STORAGE_ENCRYPTION_KEY_FILE: /run/authelia-secrets/storage_encryption_key
       AUTHELIA_STORAGE_POSTGRES_PASSWORD_FILE: /run/authelia-secrets/postgres_password
-      AUTHELIA_NOTIFIER_SMTP_ADDRESS: ${AUTHELIA_NOTIFIER_SMTP_ADDRESS:-submission://smtp-relay:25}
+      AUTHELIA_NOTIFIER_SMTP_ADDRESS: ${AUTHELIA_NOTIFIER_SMTP_ADDRESS:-smtp://smtp-relay:25}
       AUTHELIA_NOTIFIER_SMTP_SENDER: ${AUTHELIA_NOTIFIER_SMTP_SENDER:-noreply@example.com}
     ports: []
     networks:
