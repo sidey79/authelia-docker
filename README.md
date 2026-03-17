@@ -35,9 +35,9 @@ Authelia SSO/OIDC stack for internal services.
 ## Container user
 
 - Authelia runs as non-root user via `AUTHELIA_UID`/`AUTHELIA_GID`.
-- Default values in `.env.example`: `2000:2000` (free on your host at creation time).
+- Default values in `.env.example`: `1007:1007`.
 - Ensure the Authelia data path ownership matches this user, e.g.:
-  - `chown -R 2000:2000 /opt/docker/authelia/authelia`
+  - `chown -R 1007:1007 /opt/docker/authelia/authelia`
 
 ## Integration links
 
@@ -55,9 +55,7 @@ openssl rand -hex 32 > /opt/docker/authelia/secrets/reset_password_jwt_secret
 openssl rand -hex 32 > /opt/docker/authelia/secrets/session_secret
 openssl rand -hex 32 > /opt/docker/authelia/secrets/storage_encryption_key
 openssl rand -hex 32 > /opt/docker/authelia/secrets/postgres_password
-# optional when SMTP relay requires auth:
-# openssl rand -hex 32 > /opt/docker/authelia/secrets/smtp_password
-chown -R root:2000 /opt/docker/authelia/secrets
+chown -R root:1007 /opt/docker/authelia/secrets
 chmod 750 /opt/docker/authelia/secrets
 chmod 640 /opt/docker/authelia/secrets/*
 docker compose pull
