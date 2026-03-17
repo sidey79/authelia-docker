@@ -32,7 +32,7 @@ services:
       retries: 3
 
   postgresql:
-    image: docker.io/library/postgres:16.13@sha256:78df81b1442dcc764c1104154da7162635e40cfffe67579c42a1c1b96dfc209c
+    image: docker.io/library/postgres:16.13@sha256:ce5c12ac6952df86affd04ade354cfcb9a0aa1171cd7912e6dbd81578a989a63
     volumes:
       - ${BASE_STACK_DATA_PATH}/postgresql:/var/lib/postgresql/data
     environment:
