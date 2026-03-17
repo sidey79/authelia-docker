@@ -28,7 +28,7 @@ Authelia SSO/OIDC stack for internal services.
 - Effective paths:
   - `${BASE_STACK_DATA_PATH}/authelia`
   - `${BASE_STACK_DATA_PATH}/postgresql`
-  - `${BASE_STACK_DATA_PATH}/redis`
+- Redis is intentionally non-persistent (session loss after Redis/container restart is accepted).
 
 ## Integration links
 
@@ -40,7 +40,7 @@ Authelia SSO/OIDC stack for internal services.
 ```bash
 cp .env.example .env
 # adapt .env and config/authelia/configuration.yml for your domain
-mkdir -p /opt/docker/authelia/authelia /opt/docker/authelia/postgresql /opt/docker/authelia/redis
+mkdir -p /opt/docker/authelia/authelia /opt/docker/authelia/postgresql
 docker compose pull
 docker compose up -d
 ```
