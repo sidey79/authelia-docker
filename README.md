@@ -19,7 +19,9 @@ Authelia SSO/OIDC stack for internal services.
 - `authelia` is attached to:
   - `authelia_internal` (internal app network)
   - external proxy network `network_backend_net`
+- external SMTP network `smtp_relay_net` (from `smtp-relay-docker`)
 - Ensure `network_backend_net` exists before starting this stack.
+- Ensure `smtp_relay_net` exists before starting this stack.
 
 ## Persistence model
 

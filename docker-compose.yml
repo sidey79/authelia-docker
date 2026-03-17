@@ -25,6 +25,7 @@ services:
     networks:
       - authelia_internal
       - proxy_net
+      - smtp_relay_net
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:9091/api/health || exit 1"]
@@ -71,3 +72,6 @@ networks:
   proxy_net:
     external: true
     name: network_backend_net
+  smtp_relay_net:
+    external: true
+    name: smtp_relay_net
