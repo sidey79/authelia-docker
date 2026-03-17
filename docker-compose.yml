@@ -15,13 +15,13 @@ services:
       - ${BASE_STACK_DATA_PATH}/secrets:/run/authelia-secrets:ro
     environment:
       TZ: ${TZ}
-      AUTHELIA_IDENTITY_VALIDATION__RESET_PASSWORD__JWT_SECRET_FILE: /run/authelia-secrets/reset_password_jwt_secret
-      AUTHELIA_SESSION__SECRET_FILE: /run/authelia-secrets/session_secret
-      AUTHELIA_STORAGE__ENCRYPTION_KEY_FILE: /run/authelia-secrets/storage_encryption_key
-      AUTHELIA_STORAGE__POSTGRES__PASSWORD_FILE: /run/authelia-secrets/postgres_password
-      AUTHELIA_NOTIFIER__SMTP__ADDRESS: ${AUTHELIA_NOTIFIER__SMTP__ADDRESS}
-      AUTHELIA_NOTIFIER__SMTP__SENDER: ${AUTHELIA_NOTIFIER__SMTP__SENDER}
-      AUTHELIA_NOTIFIER__SMTP__PASSWORD_FILE:
+      AUTHELIA_IDENTITY_VALIDATION_RESET_PASSWORD_JWT_SECRET_FILE: /run/authelia-secrets/reset_password_jwt_secret
+      AUTHELIA_SESSION_SECRET_FILE: /run/authelia-secrets/session_secret
+      AUTHELIA_STORAGE_ENCRYPTION_KEY_FILE: /run/authelia-secrets/storage_encryption_key
+      AUTHELIA_STORAGE_POSTGRES_PASSWORD_FILE: /run/authelia-secrets/postgres_password
+      AUTHELIA_NOTIFIER_SMTP_ADDRESS: ${AUTHELIA_NOTIFIER_SMTP_ADDRESS}
+      AUTHELIA_NOTIFIER_SMTP_SENDER: ${AUTHELIA_NOTIFIER_SMTP_SENDER}
+      AUTHELIA_NOTIFIER_SMTP_PASSWORD_FILE: ${AUTHELIA_NOTIFIER_SMTP_PASSWORD_FILE-}
     ports: []
     networks:
       - authelia_internal
