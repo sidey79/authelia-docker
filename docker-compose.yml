@@ -2,7 +2,7 @@ name: authelia-docker
 
 services:
   authelia:
-    image: authelia/authelia:4.39.4
+    image: authelia/authelia:4.39.4@sha256:64b356c30fd817817a4baafb4dbc0f9f8702e46b49e1edb92ff42e19e487b517
     container_name: authelia
     depends_on:
       postgresql:
@@ -50,7 +50,7 @@ services:
       retries: 5
 
   redis:
-    image: docker.io/library/redis:8
+    image: docker.io/library/redis:8@sha256:a019c005570189bb038155c1dfb1a269b59b83f9ceee22fd5f42de205ac19c06
     ports: []
     networks:
       - authelia_internal
