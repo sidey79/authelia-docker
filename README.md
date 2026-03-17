@@ -28,6 +28,8 @@ Authelia SSO/OIDC stack for internal services.
 - Effective paths:
   - `${BASE_STACK_DATA_PATH}/authelia`
   - `${BASE_STACK_DATA_PATH}/postgresql`
+- Secrets path:
+  - `${BASE_STACK_DATA_PATH}/secrets` (bind-mounted read-only into containers at `/run/authelia-secrets`)
 - Redis is intentionally non-persistent (session loss after Redis/container restart is accepted).
 
 ## Container user
@@ -48,6 +50,14 @@ Authelia SSO/OIDC stack for internal services.
 cp .env.example .env
 # adapt .env and config/authelia/configuration.yml for your domain
 mkdir -p /opt/docker/authelia/authelia /opt/docker/authelia/postgresql
+mkdir -p /opt/docker/authelia/secrets
+openssl rand -hex 32 > /opt/docker/authelia/secrets/reset_password_jwt_secret
+openssl rand -hex 32 > /opt/docker/authelia/secrets/session_secret
+openssl rand -hex 32 > /opt/docker/authelia/secrets/storage_encryption_key
+openssl rand -hex 32 > /opt/docker/authelia/secrets/postgres_password
+# optional when SMTP relay requires auth:
+# openssl rand -hex 32 > /opt/docker/authelia/secrets/smtp_password
+chmod 600 /opt/docker/authelia/secrets/*
 docker compose pull
 docker compose up -d
 ```
@@ -56,4 +66,5 @@ docker compose up -d
 
 - Never commit `.env`.
 - Replace all placeholder values in `.env`.
+- Keep `${BASE_STACK_DATA_PATH}/secrets` readable only for privileged users.
 - Restrict access to services on `network_backend_net`.

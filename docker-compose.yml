@@ -12,14 +12,16 @@ services:
     volumes:
       - ./config/authelia:/config:ro
       - ${BASE_STACK_DATA_PATH}/authelia:/var/lib/authelia
+      - ${BASE_STACK_DATA_PATH}/secrets:/run/authelia-secrets:ro
     environment:
       TZ: ${TZ}
-      AUTHELIA_IDENTITY_VALIDATION__RESET_PASSWORD__JWT_SECRET: ${AUTHELIA_IDENTITY_VALIDATION__RESET_PASSWORD__JWT_SECRET}
-      AUTHELIA_SESSION__SECRET: ${AUTHELIA_SESSION__SECRET}
-      AUTHELIA_STORAGE__ENCRYPTION_KEY: ${AUTHELIA_STORAGE__ENCRYPTION_KEY}
-      AUTHELIA_STORAGE__POSTGRES__PASSWORD: ${AUTHELIA_STORAGE__POSTGRES__PASSWORD}
+      AUTHELIA_IDENTITY_VALIDATION__RESET_PASSWORD__JWT_SECRET_FILE: /run/authelia-secrets/reset_password_jwt_secret
+      AUTHELIA_SESSION__SECRET_FILE: /run/authelia-secrets/session_secret
+      AUTHELIA_STORAGE__ENCRYPTION_KEY_FILE: /run/authelia-secrets/storage_encryption_key
+      AUTHELIA_STORAGE__POSTGRES__PASSWORD_FILE: /run/authelia-secrets/postgres_password
       AUTHELIA_NOTIFIER__SMTP__ADDRESS: ${AUTHELIA_NOTIFIER__SMTP__ADDRESS}
       AUTHELIA_NOTIFIER__SMTP__SENDER: ${AUTHELIA_NOTIFIER__SMTP__SENDER}
+      AUTHELIA_NOTIFIER__SMTP__PASSWORD_FILE: /run/authelia-secrets/smtp_password
     ports: []
     networks:
       - authelia_internal
@@ -36,10 +38,11 @@ services:
     image: docker.io/library/postgres:16.13@sha256:ce5c12ac6952df86affd04ade354cfcb9a0aa1171cd7912e6dbd81578a989a63
     volumes:
       - ${BASE_STACK_DATA_PATH}/postgresql:/var/lib/postgresql/data
+      - ${BASE_STACK_DATA_PATH}/secrets:/run/authelia-secrets:ro
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_PASSWORD_FILE: /run/authelia-secrets/postgres_password
     ports: []
     networks:
       - authelia_internal
