@@ -1,1 +1,91 @@
+version: "3.9"
+name: authelia-docker
 
+services:
+  authelia:
+    image: authelia/authelia:4.39.4
+    container_name: authelia
+    depends_on:
+      postgresql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./config/authelia:/config:ro
+      - authelia_data:/var/lib/authelia
+    secrets:
+      - authelia_jwt_secret
+      - authelia_session_secret
+      - authelia_storage_encryption_key
+    environment:
+      TZ: ${TZ}
+      AUTHELIA_JWT_SECRET_FILE: /run/secrets/authelia_jwt_secret
+      AUTHELIA_SESSION_SECRET_FILE: /run/secrets/authelia_session_secret
+      AUTHELIA_STORAGE_ENCRYPTION_KEY_FILE: /run/secrets/authelia_storage_encryption_key
+    ports: []
+    networks:
+      - authelia_internal
+      - proxy_net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:9091/api/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  postgresql:
+    image: docker.io/library/postgres:16.13@sha256:78df81b1442dcc764c1104154da7162635e40cfffe67579c42a1c1b96dfc209c
+    volumes:
+      - postgresql_data:/var/lib/postgresql/data
+    secrets:
+      - postgres_password
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+    ports: []
+    networks:
+      - authelia_internal
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  redis:
+    image: docker.io/library/redis:8
+    volumes:
+      - redis_data:/data
+    ports: []
+    networks:
+      - authelia_internal
+    command: ["redis-server", "--save", "60", "1", "--loglevel", "warning"]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+networks:
+  authelia_internal:
+    internal: true
+  proxy_net:
+    external: true
+    name: network_backend_net
+
+volumes:
+  authelia_data:
+  postgresql_data:
+  redis_data:
+
+secrets:
+  authelia_jwt_secret:
+    file: ./secrets/authelia_jwt_secret.txt
+  authelia_session_secret:
+    file: ./secrets/authelia_session_secret.txt
+  authelia_storage_encryption_key:
+    file: ./secrets/authelia_storage_encryption_key.txt
+  postgres_password:
+    file: ./secrets/postgres_password.txt
