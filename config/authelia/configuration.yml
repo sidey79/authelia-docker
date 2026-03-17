@@ -9,8 +9,7 @@ log:
   level: info
 
 identity_validation:
-  reset_password:
-    jwt_secret: replace-with-strong-random-jwt-secret
+  reset_password: {}
 
 authentication_backend:
   file:
@@ -24,7 +23,6 @@ access_control:
 
 session:
   name: authelia_session
-  secret: replace-with-strong-random-session-secret
   cookies:
     - name: authelia_session
       domain: example.com
@@ -35,15 +33,11 @@ session:
     port: 6379
 
 storage:
-  encryption_key: replace-with-strong-random-encryption-key
   postgres:
     address: tcp://postgresql:5432
     database: authelia
     username: authelia
-    password: replace-with-strong-postgres-password
 
 notifier:
   smtp:
-    address: submission://smtp-relay:25
-    sender: noreply@example.com
     subject: "[Authelia] {title}"

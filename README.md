@@ -21,6 +21,15 @@ Authelia SSO/OIDC stack for internal services.
   - external proxy network `network_backend_net`
 - Ensure `network_backend_net` exists before starting this stack.
 
+## Persistence model
+
+- Persistent data is bind-mounted from host paths via `BASE_STACK_DATA_PATH`.
+- Default in `.env.example`: `/opt/docker/authelia`
+- Effective paths:
+  - `${BASE_STACK_DATA_PATH}/authelia`
+  - `${BASE_STACK_DATA_PATH}/postgresql`
+  - `${BASE_STACK_DATA_PATH}/redis`
+
 ## Integration links
 
 - Reverse proxy: https://github.com/sidey79/caddy-rproxy
@@ -30,21 +39,14 @@ Authelia SSO/OIDC stack for internal services.
 
 ```bash
 cp .env.example .env
-mkdir -p secrets
-
-# create required secret files
-openssl rand -hex 32 > secrets/authelia_jwt_secret.txt
-openssl rand -hex 32 > secrets/authelia_session_secret.txt
-openssl rand -hex 32 > secrets/authelia_storage_encryption_key.txt
-openssl rand -hex 32 > secrets/postgres_password.txt
-
-# adapt config/authelia/configuration.yml for your domain
+# adapt .env and config/authelia/configuration.yml for your domain
+mkdir -p /opt/docker/authelia/authelia /opt/docker/authelia/postgresql /opt/docker/authelia/redis
 docker compose pull
 docker compose up -d
 ```
 
 ## Security notes
 
-- Never commit `.env` or `secrets/*.txt`.
-- Replace all placeholder values in `config/authelia/configuration.yml`.
+- Never commit `.env`.
+- Replace all placeholder values in `.env`.
 - Restrict access to services on `network_backend_net`.

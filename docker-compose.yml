@@ -11,16 +11,15 @@ services:
         condition: service_healthy
     volumes:
       - ./config/authelia:/config:ro
-      - authelia_data:/var/lib/authelia
-    secrets:
-      - authelia_jwt_secret
-      - authelia_session_secret
-      - authelia_storage_encryption_key
+      - ${BASE_STACK_DATA_PATH}/authelia:/var/lib/authelia
     environment:
       TZ: ${TZ}
-      AUTHELIA_JWT_SECRET_FILE: /run/secrets/authelia_jwt_secret
-      AUTHELIA_SESSION_SECRET_FILE: /run/secrets/authelia_session_secret
-      AUTHELIA_STORAGE_ENCRYPTION_KEY_FILE: /run/secrets/authelia_storage_encryption_key
+      AUTHELIA_IDENTITY_VALIDATION__RESET_PASSWORD__JWT_SECRET: ${AUTHELIA_IDENTITY_VALIDATION__RESET_PASSWORD__JWT_SECRET}
+      AUTHELIA_SESSION__SECRET: ${AUTHELIA_SESSION__SECRET}
+      AUTHELIA_STORAGE__ENCRYPTION_KEY: ${AUTHELIA_STORAGE__ENCRYPTION_KEY}
+      AUTHELIA_STORAGE__POSTGRES__PASSWORD: ${AUTHELIA_STORAGE__POSTGRES__PASSWORD}
+      AUTHELIA_NOTIFIER__SMTP__ADDRESS: ${AUTHELIA_NOTIFIER__SMTP__ADDRESS}
+      AUTHELIA_NOTIFIER__SMTP__SENDER: ${AUTHELIA_NOTIFIER__SMTP__SENDER}
     ports: []
     networks:
       - authelia_internal
@@ -35,13 +34,11 @@ services:
   postgresql:
     image: docker.io/library/postgres:16.13@sha256:78df81b1442dcc764c1104154da7162635e40cfffe67579c42a1c1b96dfc209c
     volumes:
-      - postgresql_data:/var/lib/postgresql/data
-    secrets:
-      - postgres_password
+      - ${BASE_STACK_DATA_PATH}/postgresql:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports: []
     networks:
       - authelia_internal
@@ -55,7 +52,7 @@ services:
   redis:
     image: docker.io/library/redis:8
     volumes:
-      - redis_data:/data
+      - ${BASE_STACK_DATA_PATH}/redis:/data
     ports: []
     networks:
       - authelia_internal
@@ -73,18 +70,3 @@ networks:
   proxy_net:
     external: true
     name: network_backend_net
-
-volumes:
-  authelia_data:
-  postgresql_data:
-  redis_data:
-
-secrets:
-  authelia_jwt_secret:
-    file: ./secrets/authelia_jwt_secret.txt
-  authelia_session_secret:
-    file: ./secrets/authelia_session_secret.txt
-  authelia_storage_encryption_key:
-    file: ./secrets/authelia_storage_encryption_key.txt
-  postgres_password:
-    file: ./secrets/postgres_password.txt
