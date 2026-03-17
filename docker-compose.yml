@@ -21,7 +21,7 @@ services:
       AUTHELIA_STORAGE__POSTGRES__PASSWORD_FILE: /run/authelia-secrets/postgres_password
       AUTHELIA_NOTIFIER__SMTP__ADDRESS: ${AUTHELIA_NOTIFIER__SMTP__ADDRESS}
       AUTHELIA_NOTIFIER__SMTP__SENDER: ${AUTHELIA_NOTIFIER__SMTP__SENDER}
-      AUTHELIA_NOTIFIER__SMTP__PASSWORD_FILE: /run/authelia-secrets/smtp_password
+      AUTHELIA_NOTIFIER__SMTP__PASSWORD_FILE:
     ports: []
     networks:
       - authelia_internal

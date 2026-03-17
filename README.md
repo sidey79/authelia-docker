@@ -57,7 +57,9 @@ openssl rand -hex 32 > /opt/docker/authelia/secrets/storage_encryption_key
 openssl rand -hex 32 > /opt/docker/authelia/secrets/postgres_password
 # optional when SMTP relay requires auth:
 # openssl rand -hex 32 > /opt/docker/authelia/secrets/smtp_password
-chmod 600 /opt/docker/authelia/secrets/*
+chown -R root:2000 /opt/docker/authelia/secrets
+chmod 750 /opt/docker/authelia/secrets
+chmod 640 /opt/docker/authelia/secrets/*
 docker compose pull
 docker compose up -d
 ```
