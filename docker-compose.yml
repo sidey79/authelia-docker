@@ -30,6 +30,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+    user: "${AUTHELIA_UID}:${AUTHELIA_GID}"
 
   postgresql:
     image: docker.io/library/postgres:16.13@sha256:ce5c12ac6952df86affd04ade354cfcb9a0aa1171cd7912e6dbd81578a989a63
