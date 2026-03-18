@@ -1,8 +1,0 @@
-users:
-  admin:
-    disabled: true
-    displayname: "Admin"
-    password: "$2y$05$abcdefghijklmnopqrstuu4R9Jjv4fM1MdQn7xVY8qf2Q0H1Y2z4e"
-    email: admin@example.com
-    groups:
-      - admins
