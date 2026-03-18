@@ -20,7 +20,7 @@ authentication_backend:
 access_control:
   default_policy: deny
   rules:
-    - domain: "*.example.com"
+    - domain: "*.sidey.blausee.eu"
       policy: one_factor
 
 session:
