@@ -9,7 +9,6 @@ Authelia SSO/OIDC stack for internal services.
   - `postgresql`
   - `redis`
 - `config/authelia/configuration.yml` baseline config
-- `config/authelia/users_database.yml` file backend placeholder
 - `.env.example` as secret-free template
 - `.gitignore` to avoid committing local secrets
 
@@ -32,6 +31,7 @@ Authelia SSO/OIDC stack for internal services.
   - `${BASE_STACK_DATA_PATH}/postgresql`
 - Secrets path:
   - `${BASE_STACK_DATA_PATH}/secrets` (bind-mounted read-only into containers at `/run/authelia-secrets`)
+  - user database file: `${BASE_STACK_DATA_PATH}/secrets/users_database.yml`
 - Custom trusted CAs for Authelia:
   - `${ROOT_CA_CERT_HOST_PATH}` bind-mounted read-only to `/certificates/root-ca.cert.pem`
 - Redis is intentionally non-persistent (session loss after Redis/container restart is accepted).
@@ -59,6 +59,7 @@ openssl rand -hex 32 | tr -d '\n' > /opt/docker/authelia/secrets/reset_password_
 openssl rand -hex 32 | tr -d '\n' > /opt/docker/authelia/secrets/session_secret
 openssl rand -hex 32 | tr -d '\n' > /opt/docker/authelia/secrets/storage_encryption_key
 openssl rand -hex 32 | tr -d '\n' > /opt/docker/authelia/secrets/postgres_password
+printf 'users: {}\n' > /opt/docker/authelia/secrets/users_database.yml
 chown -R root:1007 /opt/docker/authelia/secrets
 chmod 750 /opt/docker/authelia/secrets
 chmod 640 /opt/docker/authelia/secrets/*
@@ -68,9 +69,20 @@ docker compose pull
 docker compose up -d
 ```
 
+## Manage users
+
+Generate a password hash with the running container:
+
+```bash
+docker exec authelia authelia crypto hash generate argon2 --password 'CHANGE_ME'
+```
+
+Then add the user entry to `${BASE_STACK_DATA_PATH}/secrets/users_database.yml` and restart Authelia.
+
 ## Security notes
 
 - Never commit `.env`.
+- Never commit `${BASE_STACK_DATA_PATH}/secrets/*`.
 - Replace all placeholder values in `.env`.
 - Keep `${BASE_STACK_DATA_PATH}/secrets` readable only for privileged users.
 - Restrict access to services on `network_backend_net`.
