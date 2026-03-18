@@ -33,7 +33,7 @@ services:
     user: "${AUTHELIA_UID}:${AUTHELIA_GID}"
 
   postgresql:
-    image: docker.io/library/postgres:16.13@sha256:ce5c12ac6952df86affd04ade354cfcb9a0aa1171cd7912e6dbd81578a989a63
+    image: docker.io/library/postgres:16.13@sha256:2586e2a95d1c9b31cb2967feb562948f7d364854453d703039b6efa45fe48417
     volumes:
       - ${BASE_STACK_DATA_PATH}/postgresql:/var/lib/postgresql/data
     environment:
