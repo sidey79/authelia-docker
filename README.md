@@ -32,6 +32,8 @@ Authelia SSO/OIDC stack for internal services.
   - `${BASE_STACK_DATA_PATH}/postgresql`
 - Secrets path:
   - `${BASE_STACK_DATA_PATH}/secrets` (bind-mounted read-only into containers at `/run/authelia-secrets`)
+- Custom trusted CAs for Authelia:
+  - `/opt/docker/rootca/root-ca.cert.pem` bind-mounted read-only to `/certificates/root-ca.cert.pem`
 - Redis is intentionally non-persistent (session loss after Redis/container restart is accepted).
 
 ## Container user
@@ -60,6 +62,8 @@ openssl rand -hex 32 | tr -d '\n' > /opt/docker/authelia/secrets/postgres_passwo
 chown -R root:1007 /opt/docker/authelia/secrets
 chmod 750 /opt/docker/authelia/secrets
 chmod 640 /opt/docker/authelia/secrets/*
+chown root:root /opt/docker/rootca/root-ca.cert.pem
+chmod 644 /opt/docker/rootca/root-ca.cert.pem
 docker compose pull
 docker compose up -d
 ```

@@ -13,6 +13,7 @@ services:
       - ./config/authelia:/config:ro
       - ${BASE_STACK_DATA_PATH}/authelia:/var/lib/authelia
       - ${BASE_STACK_DATA_PATH}/secrets:/run/authelia-secrets:ro
+      - /opt/docker/rootca/root-ca.cert.pem:/certificates/root-ca.cert.pem:ro
     environment:
       TZ: ${TZ}
       AUTHELIA_IDENTITY_VALIDATION_RESET_PASSWORD_JWT_SECRET_FILE: /run/authelia-secrets/reset_password_jwt_secret
