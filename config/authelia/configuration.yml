@@ -8,6 +8,8 @@ server:
 log:
   level: info
 
+certificates_directory: /certificates
+
 identity_validation:
   reset_password: {}
 
