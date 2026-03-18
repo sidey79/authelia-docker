@@ -15,7 +15,7 @@ identity_validation:
 
 authentication_backend:
   file:
-    path: /config/users_database.yml
+    path: /run/authelia-secrets/users_database.yml
 
 access_control:
   default_policy: deny
