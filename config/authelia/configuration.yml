@@ -20,6 +20,11 @@ authentication_backend:
 access_control:
   default_policy: deny
   rules:
+    - domain: "dms.sidey.blausee.eu"
+      subject: "group:paperless-users"
+      policy: one_factor
+    - domain: "dms.sidey.blausee.eu"
+      policy: deny
     - domain: "*.sidey.blausee.eu"
       policy: one_factor
 

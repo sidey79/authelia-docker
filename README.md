@@ -48,6 +48,13 @@ Authelia SSO/OIDC stack for internal services.
 - Reverse proxy: https://github.com/sidey79/caddy-rproxy
 - SMTP relay: https://github.com/sidey79/smtp-relay-docker
 
+## Paperless access control
+
+- `dms.sidey.blausee.eu` is restricted to the Authelia group `paperless-users`.
+- Group membership is managed in `${BASE_STACK_DATA_PATH}/secrets/users_database.yml`.
+- After changing group membership, restart the Authelia container so the file-based
+  user database is reloaded consistently.
+
 ## Quick start
 
 ```bash
