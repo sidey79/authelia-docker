@@ -31,6 +31,8 @@ access_control:
       policy: one_factor
     - domain: "dms.sidey.blausee.eu"
       policy: deny
+    - domain: "bitwarden.sidey.blausee.eu"
+      policy: two_factor
     - domain: "*.sidey.blausee.eu"
       policy: one_factor
 
@@ -40,7 +42,7 @@ session:
     - name: authelia_session
       domain: sidey.blausee.eu
       authelia_url: https://auth.sidey.blausee.eu
-      default_redirection_url: https://workflow.sidey.blausee.eu
+      default_redirection_url: https://auth.sidey.blausee.eu
   redis:
     host: redis
     port: 6379
@@ -53,4 +55,4 @@ storage:
 
 notifier:
   smtp:
-    subject: "[Authelia] {title}"
+    subject: "[Authelia Blausee] {title}"
