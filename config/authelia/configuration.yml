@@ -17,6 +17,12 @@ authentication_backend:
   file:
     path: /run/authelia-secrets/users_database.yml
 
+webauthn:
+  enable_passkey_login: true
+  selection_criteria:
+    discoverability: preferred
+    user_verification: preferred
+
 access_control:
   default_policy: deny
   rules:
