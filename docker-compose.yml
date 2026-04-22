@@ -36,7 +36,7 @@ services:
     user: "${AUTHELIA_UID}:${AUTHELIA_GID}"
 
   postgresql:
-    image: docker.io/library/postgres:16.13@sha256:5a65324fe84dc41709ff914e90b07f3e2f577073ed27bf917d4873aca0c9ec51
+    image: docker.io/library/postgres:16.13@sha256:760ea41aae126965bedd587d35a23de37447bb13a6ac4444bef6ff73b8b72234
     volumes:
       - ${BASE_STACK_DATA_PATH}/postgresql:/var/lib/postgresql/data
       - ${BASE_STACK_DATA_PATH}/secrets:/run/authelia-secrets:ro
