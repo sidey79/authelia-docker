@@ -32,6 +32,9 @@ Authelia SSO/OIDC stack for internal services.
 - Secrets path:
   - `${BASE_STACK_DATA_PATH}/secrets` (bind-mounted read-only into containers at `/run/authelia-secrets`)
   - user database file: `${BASE_STACK_DATA_PATH}/secrets/users_database.yml`
+  - OIDC HMAC secret: `${BASE_STACK_DATA_PATH}/secrets/oidc_hmac_secret`
+  - OIDC issuer key: `${BASE_STACK_DATA_PATH}/secrets/oidc_jwks_rsa_private_key.pem`
+  - Vaultwarden OIDC client secret digest: `${BASE_STACK_DATA_PATH}/secrets/vaultwarden_oidc_client_secret_digest`
 - Custom trusted CAs for Authelia:
   - `${ROOT_CA_CERT_HOST_PATH}` bind-mounted read-only to `/certificates/root-ca.cert.pem`
 - Redis is intentionally non-persistent (session loss after Redis/container restart is accepted).
@@ -66,6 +69,8 @@ openssl rand -hex 32 | tr -d '\n' > /opt/docker/authelia/secrets/reset_password_
 openssl rand -hex 32 | tr -d '\n' > /opt/docker/authelia/secrets/session_secret
 openssl rand -hex 32 | tr -d '\n' > /opt/docker/authelia/secrets/storage_encryption_key
 openssl rand -hex 32 | tr -d '\n' > /opt/docker/authelia/secrets/postgres_password
+openssl rand -hex 64 | tr -d '\n' > /opt/docker/authelia/secrets/oidc_hmac_secret
+openssl genrsa -out /opt/docker/authelia/secrets/oidc_jwks_rsa_private_key.pem 2048
 printf 'users: {}\n' > /opt/docker/authelia/secrets/users_database.yml
 chown -R root:1007 /opt/docker/authelia/secrets
 chmod 750 /opt/docker/authelia/secrets
@@ -86,6 +91,34 @@ docker exec authelia authelia crypto hash generate argon2 --password 'CHANGE_ME'
 
 Then add the user entry to `${BASE_STACK_DATA_PATH}/secrets/users_database.yml` and restart Authelia.
 
+## Vaultwarden OIDC
+
+Generate the OIDC HMAC secret and issuer key once and keep both files stable
+across deployments:
+
+```bash
+openssl rand -hex 64 | tr -d '\n' > /opt/docker/authelia/secrets/oidc_hmac_secret
+openssl genrsa -out /opt/docker/authelia/secrets/oidc_jwks_rsa_private_key.pem 2048
+chown root:1007 /opt/docker/authelia/secrets/oidc_hmac_secret /opt/docker/authelia/secrets/oidc_jwks_rsa_private_key.pem
+chmod 640 /opt/docker/authelia/secrets/oidc_hmac_secret /opt/docker/authelia/secrets/oidc_jwks_rsa_private_key.pem
+```
+
+Do not regenerate these files during normal updates. Changing them invalidates
+existing OIDC sessions and refresh tokens.
+
+Generate the Vaultwarden OIDC client secret digest with the same plaintext secret
+used as `SSO_CLIENT_SECRET` in the Vaultwarden stack:
+
+```bash
+docker exec authelia authelia crypto hash generate pbkdf2 --variant sha512 --password 'CHANGE_ME'
+```
+
+Store only the generated digest in
+`${BASE_STACK_DATA_PATH}/secrets/vaultwarden_oidc_client_secret_digest`.
+Users in the `vaultwarden-admins` Authelia group receive the Vaultwarden `admin`
+role; users in `vaultwarden-users` receive the `user` role. Existing users can
+still log in if their Vaultwarden email address matches the Authelia email claim.
+
 ## Security notes
 
 - Never commit `.env`.
@@ -93,3 +126,5 @@ Then add the user entry to `${BASE_STACK_DATA_PATH}/secrets/users_database.yml` 
 - Replace all placeholder values in `.env`.
 - Keep `${BASE_STACK_DATA_PATH}/secrets` readable only for privileged users.
 - Restrict access to services on `network_backend_net`.
+- Keep `X_AUTHELIA_CONFIG_FILTERS=template` enabled; the OIDC key and client
+  secret digest are loaded with Authelia's configuration template filter.

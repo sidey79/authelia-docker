@@ -23,6 +23,51 @@ webauthn:
     discoverability: preferred
     user_verification: preferred
 
+definitions:
+  user_attributes:
+    vaultwarden_roles:
+      expression: '"vaultwarden-admins" in groups ? ["admin"] : "vaultwarden-users" in groups ? ["user"] : [""]'
+
+identity_providers:
+  oidc:
+    jwks:
+      - key: {{ secret "/run/authelia-secrets/oidc_jwks_rsa_private_key.pem" | mindent 10 "|" | msquote }}
+    claims_policies:
+      vaultwarden:
+        id_token:
+          - vaultwarden_roles
+        custom_claims:
+          vaultwarden_roles: {}
+    scopes:
+      vaultwarden:
+        claims:
+          - vaultwarden_roles
+    clients:
+      - client_id: vaultwarden
+        client_name: Vaultwarden
+        client_secret: {{ secret "/run/authelia-secrets/vaultwarden_oidc_client_secret_digest" | msquote }}
+        public: false
+        authorization_policy: two_factor
+        require_pkce: true
+        pkce_challenge_method: S256
+        claims_policy: vaultwarden
+        redirect_uris:
+          - https://bitwarden.sidey.blausee.eu/identity/connect/oidc-signin
+        scopes:
+          - openid
+          - offline_access
+          - profile
+          - email
+          - vaultwarden
+        response_types:
+          - code
+        grant_types:
+          - authorization_code
+          - refresh_token
+        access_token_signed_response_alg: none
+        userinfo_signed_response_alg: none
+        token_endpoint_auth_method: client_secret_basic
+
 access_control:
   default_policy: deny
   rules:
