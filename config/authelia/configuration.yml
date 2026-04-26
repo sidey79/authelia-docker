@@ -26,7 +26,7 @@ webauthn:
 definitions:
   user_attributes:
     vaultwarden_roles:
-      expression: '"vaultwarden-admins" in groups ? ["admin"] : "vaultwarden-users" in groups ? ["user"] : [""]'
+      expression: '"vaultwarden-admins" in groups ? ["admin"] : "vaultwarden-users" in groups ? ["user"] : []'
 
 identity_providers:
   oidc:
