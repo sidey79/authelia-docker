@@ -107,10 +107,20 @@ Do not regenerate these files during normal updates. Changing them invalidates
 existing OIDC sessions and refresh tokens.
 
 Generate the Vaultwarden OIDC client secret digest with the same plaintext secret
-used as `SSO_CLIENT_SECRET` in the Vaultwarden stack:
+used as `SSO_CLIENT_SECRET` in the Vaultwarden stack. This file must exist
+before Authelia starts, so use a one-shot container for initial setup:
 
 ```bash
-docker exec authelia authelia crypto hash generate pbkdf2 --variant sha512 --password 'CHANGE_ME'
+read -rsp 'Vaultwarden SSO client secret: ' SSO_CLIENT_SECRET
+printf '\n'
+docker run --rm authelia/authelia:4.39.19 \
+  authelia crypto hash generate pbkdf2 --variant sha512 \
+  --password "${SSO_CLIENT_SECRET}" --no-confirm \
+  | sed 's/^Digest: //' \
+  > /opt/docker/authelia/secrets/vaultwarden_oidc_client_secret_digest
+unset SSO_CLIENT_SECRET
+chown root:1007 /opt/docker/authelia/secrets/vaultwarden_oidc_client_secret_digest
+chmod 640 /opt/docker/authelia/secrets/vaultwarden_oidc_client_secret_digest
 ```
 
 Store only the generated digest in
