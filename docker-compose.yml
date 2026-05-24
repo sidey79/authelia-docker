@@ -72,6 +72,9 @@ services:
 networks:
   authelia_internal:
     internal: true
+    ipam:
+      config:
+        - subnet: 172.31.250.0/29
   proxy_net:
     external: true
     name: network_backend_net
