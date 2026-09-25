@@ -28,7 +28,7 @@ Authelia SSO/OIDC stack for internal services.
 - Default in `.env.example`: `/opt/docker/authelia`
 - Effective paths:
   - `${BASE_STACK_DATA_PATH}/authelia`
-  - `${BASE_STACK_DATA_PATH}/postgresql`
+  - `${BASE_STACK_DATA_PATH}/postgresql18` (PostgreSQL 18 layout, mounted at `/var/lib/postgresql`; `PGDATA` is `18/docker` below it)
 - Secrets path:
   - `${BASE_STACK_DATA_PATH}/secrets` (bind-mounted read-only into containers at `/run/authelia-secrets`)
   - user database file: `${BASE_STACK_DATA_PATH}/secrets/users_database.yml`
@@ -63,7 +63,7 @@ Authelia SSO/OIDC stack for internal services.
 ```bash
 cp .env.example .env
 # adapt .env and config/authelia/configuration.yml for your domain
-mkdir -p /opt/docker/authelia/authelia /opt/docker/authelia/postgresql
+mkdir -p /opt/docker/authelia/authelia /opt/docker/authelia/postgresql18
 mkdir -p /opt/docker/authelia/secrets
 openssl rand -hex 32 | tr -d '\n' > /opt/docker/authelia/secrets/reset_password_jwt_secret
 openssl rand -hex 32 | tr -d '\n' > /opt/docker/authelia/secrets/session_secret
