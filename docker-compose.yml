@@ -2,7 +2,7 @@ name: authelia-docker
 
 services:
   authelia:
-    image: authelia/authelia:4.39.22@sha256:936134132eaf01bfa2faf85055afbc1e0cc1cc5ca4547e9c06408fd0dd784646
+    image: authelia/authelia:4.39.28@sha256:bd97cff4fcbf715b5ff1f9ae286afbe6033afce385302520b0368122d43a6f54
     container_name: authelia
     depends_on:
       postgresql:
