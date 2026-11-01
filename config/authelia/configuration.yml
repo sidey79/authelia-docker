@@ -4,6 +4,8 @@ default_2fa_method: totp
 
 server:
   address: tcp://0.0.0.0:9091
+  buffers:
+    read: 65536
 
 log:
   level: info
@@ -72,18 +74,28 @@ access_control:
   default_policy: deny
   rules:
     - domain: "dms.sidey.blausee.eu"
-      subject: "group:paperless-users"
+      subject: 
+        - 'group:admins'
+        - 'group:paperless-users'
       policy: one_factor
     - domain: "dms.sidey.blausee.eu"
       policy: deny
     - domain: "bitwarden.sidey.blausee.eu"
+      subject: 
+        - 'group:admins'
+        - 'group:vaultwarden-users'
+        - 'group:vaultwarden-admins'
       policy: two_factor
     - domain: "fhem.sidey.blausee.eu"
-      subject: "group:fhem-users"
+      subject: 
+        - 'group:admins'
+        - 'group:fhem-users'
       policy: two_factor
     - domain: "fhem.sidey.blausee.eu"
-      policy: deny
+      policy: 'two_factor'
     - domain: "*.sidey.blausee.eu"
+      subject:
+        - 'group:familie'
       policy: one_factor
 
 session:
