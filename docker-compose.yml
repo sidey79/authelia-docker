@@ -57,14 +57,14 @@ services:
       retries: 5
 
   redis:
-    image: docker.io/library/redis:8@sha256:de1068af6f552240dfab67bcc9bfef99bfc60f776bb4580ef077ea4c8c97e848
+    image: docker.io/valkey/valkey:9.1.3-alpine3.24@sha256:bf09d58e96d6b4524a15396b65b242bbe18beebbcc15a04d8ee75ddac62fae0b
     ports: []
     networks:
       - authelia_internal
-    command: ["redis-server", "--save", "", "--appendonly", "no", "--loglevel", "warning"]
+    command: ["valkey-server", "--save", "", "--appendonly", "no", "--loglevel", "warning"]
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD", "valkey-cli", "ping"]
       interval: 30s
       timeout: 10s
       retries: 5
