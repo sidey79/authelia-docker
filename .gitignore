@@ -2,3 +2,4 @@
 *.local
 .DS_Store
 config/authelia/users_database.yml
+.devcontainer/fhem-data/
